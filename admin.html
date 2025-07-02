@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - SANZ STORE ID</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('background.jpg') no-repeat left center fixed;
+      background-size: cover;
+    }
+    .tab-button {
+      transition: all 0.3s;
+    }
+    .tab-button:hover {
+      opacity: 0.9;
+    }
+    .text-left-all * {
+      text-align: left !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 text-left-all">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-6 px-4">
+    <div class="flex items-center gap-4">
+      <img src="img2.jpg" alt="Logo" class="w-12 h-12 rounded-full shadow-lg border-2 border-white">
+      <h1 class="text-3xl font-bold text-white drop-shadow">ADMIN SANZ STORE ID</h1>
+    </div>
+    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">Logout</button>
+  </header>
+
+  <!-- Container -->
+  <div class="max-w-6xl bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-lg ml-0">
+
+    <!-- Tab Navigation -->
+    <div class="mb-4 flex space-x-4">
+      <button onclick="showTab('user')" class="tab-button bg-blue-500 text-white px-4 py-2 rounded">Manajemen User</button>
+      <button onclick="showTab('finance')" class="tab-button bg-green-500 text-white px-4 py-2 rounded">Laporan Keuangan</button>
+      <button onclick="downloadKeuangan()" class="tab-button bg-yellow-500 text-black px-4 py-2 rounded">Download Keuangan</button>
+    </div>
+
+    <!-- USER TAB -->
+    <div id="user" class="tab-content">
+      <h2 class="text-xl font-semibold mb-2">Daftar Pengguna</h2>
+      <div class="overflow-auto">
+        <table class="w-full text-left border">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="p-2 border">Username</th>
+              <th class="p-2 border">Email</th>
+              <th class="p-2 border">Password</th>
+              <th class="p-2 border">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="userTable"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FINANCE TAB -->
+    <div id="finance" class="tab-content hidden">
+      <h2 class="text-xl font-semibold mb-2">Laporan Keuangan</h2>
+      <p>Total Transaksi: <span id="totalTransaksi" class="font-bold text-green-600">Rp 0</span></p>
+
+      <!-- Filter Transaksi -->
+      <div class="mt-4 bg-white p-4 rounded shadow">
+        <h3 class="font-semibold mb-2">Filter Transaksi</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-6 gap-4">
+          <div>
+            <label class="block text-sm font-medium">Tanggal Mulai</label>
+            <input type="date" id="filterTanggalMulai" class="border p-2 rounded w-full" onchange="filterTransaksi()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Jam Mulai</label>
+            <input type="time" id="filterJamMulai" class="border p-2 rounded w-full" onchange="filterTransaksi()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Tanggal Akhir</label>
+            <input type="date" id="filterTanggalAkhir" class="border p-2 rounded w-full" onchange="filterTransaksi()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Jam Akhir</label>
+            <input type="time" id="filterJamAkhir" class="border p-2 rounded w-full" onchange="filterTransaksi()">
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Metode</label>
+            <select id="filterMetode" class="border p-2 rounded w-full" onchange="filterTransaksi()">
+              <option value="">Semua</option>
+              <option value="Dana">Dana</option>
+              <option value="OVO">OVO</option>
+              <option value="Gopay">Gopay</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium">Nama Game</label>
+            <input type="text" id="filterGame" class="border p-2 rounded w-full" placeholder="Cari Game..." oninput="filterTransaksi()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Transaksi -->
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-2">Detail Transaksi:</h3>
+        <div class="overflow-auto">
+          <table class="w-full text-left border">
+            <thead>
+              <tr class="bg-gray-200">
+                <th class="p-2 border">Game</th>
+                <th class="p-2 border">Nominal</th>
+                <th class="p-2 border">Metode</th>
+                <th class="p-2 border">Waktu</th>
+              </tr>
+            </thead>
+            <tbody id="transactionTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    function showTab(tab) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.getElementById(tab).classList.remove("hidden");
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("registeredUsers")) || [];
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem("registeredUsers", JSON.stringify(users));
+    }
+
+    function renderUsers() {
+      const users = getUsers();
+      const table = document.getElementById("userTable");
+      table.innerHTML = "";
+      users.forEach((user, index) => {
+        table.innerHTML += `
+          <tr>
+            <td class="p-2 border">${user.username}</td>
+            <td class="p-2 border">${user.email}</td>
+            <td class="p-2 border">${user.password}</td>
+            <td class="p-2 border">
+              <button onclick="editUser(${index})" class="text-blue-500">Edit</button> |
+              <button onclick="deleteUser(${index})" class="text-red-500">Hapus</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function editUser(index) {
+      const users = getUsers();
+      const user = users[index];
+      const username = prompt("Edit Username:", user.username);
+      const email = prompt("Edit Email:", user.email);
+      const password = prompt("Edit Password:", user.password);
+      if (username && email && password) {
+        users[index] = { username, email, password };
+        saveUsers(users);
+        renderUsers();
+      }
+    }
+
+    function deleteUser(index) {
+      if (confirm("Yakin ingin menghapus user ini?")) {
+        const users = getUsers();
+        users.splice(index, 1);
+        saveUsers(users);
+        renderUsers();
+      }
+    }
+
+    function filterTransaksi() {
+      const tanggalMulai = document.getElementById("filterTanggalMulai").value;
+      const jamMulai = document.getElementById("filterJamMulai").value || "00:00";
+      const tanggalAkhir = document.getElementById("filterTanggalAkhir").value;
+      const jamAkhir = document.getElementById("filterJamAkhir").value || "23:59";
+
+      const waktuMulai = tanggalMulai ? new Date(`${tanggalMulai}T${jamMulai}`) : null;
+      const waktuAkhir = tanggalAkhir ? new Date(`${tanggalAkhir}T${jamAkhir}`) : null;
+
+      const metodeFilter = document.getElementById("filterMetode").value.toLowerCase();
+      const gameFilter = document.getElementById("filterGame").value.toLowerCase();
+
+      const transactions = JSON.parse(localStorage.getItem("topupTransactions")) || [];
+      let total = 0;
+      const table = document.getElementById("transactionTable");
+      table.innerHTML = "";
+
+      transactions.forEach(tx => {
+        const amount = parseInt(tx.nominal.replace(/[^\d]/g, '')) || 0;
+        const waktu = new Date(tx.waktu);
+        const metode = tx.metode.toLowerCase();
+        const game = tx.game.toLowerCase();
+
+        const cocokTanggal = (!waktuMulai || waktu >= waktuMulai) && (!waktuAkhir || waktu <= waktuAkhir);
+        const cocokMetode = !metodeFilter || metode.includes(metodeFilter);
+        const cocokGame = !gameFilter || game.includes(gameFilter);
+
+        if (cocokTanggal && cocokMetode && cocokGame) {
+          total += amount;
+          table.innerHTML += `
+            <tr>
+              <td class="p-2 border">${tx.game}</td>
+              <td class="p-2 border">Rp ${amount.toLocaleString('id-ID')}</td>
+              <td class="p-2 border">${tx.metode}</td>
+              <td class="p-2 border">${tx.waktu}</td>
+            </tr>
+          `;
+        }
+      });
+
+      document.getElementById("totalTransaksi").textContent = `Rp ${total.toLocaleString('id-ID')}`;
+    }
+
+    function loadFinanceReport() {
+      filterTransaksi();
+    }
+
+    function downloadKeuangan() {
+      const transactions = JSON.parse(localStorage.getItem("topupTransactions")) || [];
+      let total = 0;
+      let content = "LAPORAN KEUANGAN - SANZ STORE ID\n===============================\n";
+      transactions.forEach(tx => {
+        const nominal = parseInt(tx.nominal.replace(/[^\d]/g, '')) || 0;
+        total += nominal;
+        content += `Game     : ${tx.game}\nNominal  : Rp ${nominal.toLocaleString('id-ID')}\nMetode   : ${tx.metode}\nWaktu    : ${tx.waktu}\n-------------------------------\n`;
+      });
+      content += `TOTAL PENGHASILAN: Rp ${total.toLocaleString('id-ID')}\n===============================\n`;
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'Laporan_Keuangan_SANZ.txt';
+      link.click();
+    }
+
+    function logout() {
+      window.location.href = "index.html";
+    }
+
+    renderUsers();
+    loadFinanceReport();
+  </script>
+</body>
+</html>

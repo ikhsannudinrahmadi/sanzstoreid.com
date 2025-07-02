@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang Kami - SANZ STORE ID</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    input, textarea {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-blue-600 text-white py-4 shadow">
+    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="img2.jpg" alt="Logo" class="w-10 h-10 rounded-full" />
+        <h1 class="text-xl font-bold">SANZ STORE ID</h1>
+      </div>
+      <nav class="space-x-4">
+        <a href="web.html" class="hover:underline">Home</a>
+        <a href="about.html" class="underline">Tentang Kami</a>
+        <a href="https://wa.me/62895603394304?text=Halo%20Admin." target="_blank" class="hover:underline">Kontak</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Konten Utama -->
+  <main class="flex-grow py-16 px-4">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl font-bold text-gray-800 mb-6">Tentang Kami</h2>
+      <p class="text-gray-600 text-lg leading-relaxed">
+        <strong>SANZ STORE ID</strong> adalah platform top-up game terpercaya yang menyediakan layanan cepat, aman, dan harga terjangkau untuk berbagai game populer seperti Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, dan lainnya.
+      </p>
+      <p class="text-gray-600 text-lg leading-relaxed mt-4">
+        Kami berkomitmen untuk memberikan pelayanan terbaik kepada setiap pelanggan. Dengan sistem transaksi otomatis dan dukungan pelanggan yang responsif, SANZ STORE ID siap memenuhi kebutuhan top-up game kamu kapan pun dibutuhkan.
+      </p>
+      <p class="text-gray-600 text-lg leading-relaxed mt-4">
+        Bergabunglah bersama ribuan gamers lain yang sudah mempercayakan top-up mereka kepada kami!
+      </p>
+
+      <!-- Info Kontak -->
+      <div class="mt-10 text-left">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4 text-center">Informasi Perusahaan</h3>
+        <p class="text-gray-700 text-lg"><strong>Nama Pemilik:</strong> Ikhsan Nudin Rahmadi</p>
+        <p class="text-gray-700 text-lg"><strong>Alamat:</strong> Jl. Garuda No.16, Sumbersari, Kota Metro, Lampung, Indonesia</p>
+        <p class="text-gray-700 text-lg"><strong>Email:</strong> sanzstoreid@gmail.com</p>
+        <p class="text-gray-700 text-lg"><strong>Tanggal Pembuatan website:</strong> 09-06-2025</p>
+        <p class="text-gray-700 text-lg"><strong>No. WhatsApp:</strong> <a href="https://wa.me/62895603394304" class="text-blue-600 hover:underline" target="_blank">+62 895-6033-94304</a></p>
+        <p class="text-gray-700 text-lg"><strong>Jam Operasional:</strong> Setiap hari, 24 Jam</p>
+      </div>
+
+      <!-- Google Maps -->
+      <div class="mt-10">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">Lokasi Kami</h3>
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3973.614193102413!2d105.30063647413444!3d-5.165602552169824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e40b8d7a151dd91%3A0x7b0ec44bd189ff7!2sJl.%20Garuda%20No.16%2C%20Sumbersari%2C%20Kec.%20Metro%20Sel.%2C%20Kota%20Metro%2C%20Lampung%2034331!5e0!3m2!1sid!2sid!4v1751395961827!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>"
+      </div>
+
+      <!-- Form Kontak -->
+      <div class="mt-10">
+        <h3 class="text-2xl font-semibold text-gray-700 mb-4">Hubungi Kami</h3>
+        <form onsubmit="sendToWhatsApp(event)" class="text-left space-y-4 max-w-xl mx-auto">
+          <input type="text" id="nama" placeholder="Nama" class="w-full p-2 rounded" required />
+          <input type="email" id="email" placeholder="Email" class="w-full p-2 rounded" required />
+          <textarea id="pesan" rows="4" placeholder="Pesan Anda..." class="w-full p-2 rounded" required></textarea>
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Kirim via WhatsApp</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center py-4 bg-gray-200 text-gray-600">
+    &copy; 2025 SANZ STORE ID. All rights reserved.
+  </footer>
+
+  <!-- Script WhatsApp -->
+  <script>
+    function sendToWhatsApp(event) {
+      event.preventDefault();
+      const nama = document.getElementById("nama").value;
+      const email = document.getElementById("email").value;
+      const pesan = document.getElementById("pesan").value;
+      const nomorAdmin = "62895603394304";
+      const text = `Halo Admin, saya ingin menghubungi:\n\nNama: ${nama}\nEmail: ${email}\nPesan: ${pesan}`;
+      const url = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(text)}`;
+      window.open(url, "_blank");
+    }
+  </script>
+
+</body>
+</html>

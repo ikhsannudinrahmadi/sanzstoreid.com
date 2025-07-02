@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ulasan Semua Pelanggan</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-image: url('background.jpg'); /* Ganti dengan nama file kamu */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .bg-overlay {
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-gray-800">
+
+  <!-- Header -->
+  <header class="bg-white bg-opacity-90 shadow">
+    <div class="w-full flex justify-between items-center p-4">
+      <!-- Judul -->
+      <h1 class="text-2xl font-bold">Ulasan Pelanggan</h1>
+      <!-- Tombol Keluar di pojok kanan -->
+      <a href="web.html" class="ml-auto text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow transition">
+        Keluar
+      </a>
+    </div>
+  </header>
+
+  <!-- Konten -->
+  <main class="max-w-4xl ml-4 mr-auto px-4 py-8 bg-overlay rounded-xl shadow-lg mt-6">
+    <!-- Pencarian & Filter -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+      <input type="text" id="searchInput" placeholder="Cari nama atau email..."
+        class="w-full md:w-1/2 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300" />
+      <select id="filterRating"
+        class="w-full md:w-auto px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+        <option value="">Semua Rating</option>
+        <option value="5">5 Bintang</option>
+        <option value="4">4 Bintang</option>
+        <option value="3">3 Bintang</option>
+        <option value="2">2 Bintang</option>
+        <option value="1">1 Bintang</option>
+      </select>
+    </div>
+
+    <!-- Daftar Ulasan -->
+    <h2 class="text-xl font-semibold mb-4">Daftar Ulasan</h2>
+    <div id="ulasanList" class="space-y-6"></div>
+    <div id="noUlasan" class="text-left text-gray-500 mt-10 hidden text-lg italic">
+      Belum ada ulasan yang cocok.
+    </div>
+  </main>
+
+  <!-- Modal Hapus -->
+  <div id="modalHapus" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-xl p-6 w-80 shadow-lg text-center">
+      <h3 class="text-lg font-semibold mb-4">Yakin ingin menghapus ulasan ini?</h3>
+      <div class="flex justify-center gap-4">
+        <button id="btnBatal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+        <button id="btnYaHapus" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script -->
+  <script>
+    const container = document.getElementById('ulasanList');
+    const noUlasan = document.getElementById('noUlasan');
+    const searchInput = document.getElementById('searchInput');
+    const filterRating = document.getElementById('filterRating');
+
+    const modal = document.getElementById('modalHapus');
+    const btnBatal = document.getElementById('btnBatal');
+    const btnYaHapus = document.getElementById('btnYaHapus');
+
+    let ulasanList = JSON.parse(localStorage.getItem("ulasanList")) || [];
+    let indexTerpilih = null;
+
+    function renderUlasan() {
+      const searchText = searchInput.value.toLowerCase();
+      const selectedRating = filterRating.value;
+
+      container.innerHTML = "";
+
+      const filtered = ulasanList.filter(ulasan => {
+        const matchText =
+          (ulasan.nama && ulasan.nama.toLowerCase().includes(searchText)) ||
+          (ulasan.email && ulasan.email.toLowerCase().includes(searchText));
+        const matchRating =
+          selectedRating === "" || ulasan.rating == selectedRating;
+        return matchText && matchRating;
+      });
+
+      if (filtered.length === 0) {
+        noUlasan.classList.remove("hidden");
+        return;
+      } else {
+        noUlasan.classList.add("hidden");
+      }
+
+      filtered.forEach((ulasan, index) => {
+        const div = document.createElement('div');
+        div.className = "bg-white p-6 rounded-2xl shadow hover:shadow-md transition-all duration-300";
+
+        div.innerHTML = `
+          <div class="flex justify-between items-start mb-2">
+            <div class="text-yellow-400 text-xl">
+              ${'★'.repeat(ulasan.rating)}${'☆'.repeat(5 - ulasan.rating)}
+            </div>
+            <button onclick="tampilkanModal(${index})" class="text-red-500 text-sm hover:underline">Hapus</button>
+          </div>
+          <div class="mb-1 text-lg font-semibold">${ulasan.nama || '(Tanpa Nama)'}</div>
+          <div class="text-sm text-gray-500 italic">${ulasan.email || '(Tidak ada email)'}</div>
+          <div class="text-sm text-blue-600 mt-1 font-medium">Game: ${ulasan.namaGame || '(Game)'}</div>
+          <p class="mt-2 text-gray-700">${ulasan.komentar || '(Tidak ada komentar)'}</p>
+          <p class="mt-3 text-xs text-gray-400">${ulasan.waktu || ''}</p>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function tampilkanModal(index) {
+      indexTerpilih = index;
+      modal.classList.remove("hidden");
+    }
+
+    btnBatal.addEventListener("click", () => {
+      modal.classList.add("hidden");
+      indexTerpilih = null;
+    });
+
+    btnYaHapus.addEventListener("click", () => {
+      if (indexTerpilih !== null) {
+        ulasanList.splice(indexTerpilih, 1);
+        localStorage.setItem("ulasanList", JSON.stringify(ulasanList));
+        renderUlasan();
+        modal.classList.add("hidden");
+        indexTerpilih = null;
+      }
+    });
+
+    searchInput.addEventListener("input", renderUlasan);
+    filterRating.addEventListener("change", renderUlasan);
+
+    renderUlasan();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Top-Up Point Blank</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+    }
+
+    .selected {
+      border: 4px solid #3B82F6;
+      background-color: #E0F2FE;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+
+  <header class="flex items-center justify-between p-4 bg-gray-800">
+    <div class="flex items-center gap-2">
+      <img src="img2.jpg" alt="Logo" class="w-10 h-10 rounded-full" />
+      <a href="web.html" class="text-lg font-bold hover:underline">SANZ STORE ID</a>
+    </div>
+  </header>
+
+  <section class="relative bg-gradient-to-tr from-gray-700 to-black p-4 flex items-center gap-4">
+    <img src="PB Indonesia, Game Point Blank dengan Segala Kisahnya 2.jpg" alt="Point Blank"
+      class="w-20 h-20 rounded-xl object-cover">
+    <h1 class="text-2xl font-semibold">Point Blank</h1>
+  </section>
+
+  <section class="p-4 bg-gray-800 rounded-lg mx-4">
+    <div class="bg-red-600 px-4 py-2 rounded-t-lg font-bold">Lengkapi Data</div>
+    <div class="p-4">
+      <input id="userID" type="text" placeholder="Masukkan User ID" class="w-full p-3 rounded-lg text-black mb-2" />
+    </div>
+  </section>
+
+  <section class="p-4 bg-gray-800 rounded-lg mx-4 mt-6">
+    <div class="bg-red-600 px-4 py-2 rounded-t-lg font-bold">Pilih Nominal</div>
+    <div class="p-4 grid grid-cols-2 gap-3" id="nominalContainer">
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">1200 PB
+        Cash<br><strong>Rp10.999</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">2400 PB
+        Cash<br><strong>Rp20.999</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">6000 PB
+        Cash<br><strong>Rp50.468</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">12000 PB
+        Cash<br><strong>Rp101.999</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">24000 PB
+        Cash<br><strong>Rp195.371</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">36000 PB
+        Cash<br><strong>Rp299.814</strong></button>
+      <button onclick="selectNominal(this)" class="bg-white text-black p-2 rounded-lg shadow">60000 PB
+        Cash<br><strong>Rp491.371</strong></button>
+    </div>
+  </section>
+
+  <section class="p-4 bg-gray-800 rounded-lg mx-4 mt-6">
+    <div class="bg-red-600 px-4 py-2 rounded-t-lg font-bold">Metode Pembayaran</div>
+    <div class="p-4">
+      <select id="paymentMethod" class="w-full p-3 border border-gray-300 rounded-lg text-black">
+        <option value="">Pilih metode</option>
+        <option>DANA</option>
+        <option>OVO</option>
+        <option>GoPay</option>
+      </select>
+    </div>
+  </section>
+
+  <section class="p-4 bg-gray-800 rounded-lg mx-4 mt-6">
+    <div class="bg-red-600 px-4 py-2 rounded-t-lg font-bold">Detail Kontak</div>
+    <div class="p-4 space-y-4">
+      <input id="email" type="email" placeholder="example@gmail.com"
+        class="w-full p-3 rounded-lg text-black bg-gray-100" />
+      <div class="flex gap-2 items-center">
+        <div class="bg-white px-3 py-2 rounded text-black">+62</div>
+        <input id="whatsapp" type="tel" placeholder="No WhatsApp"
+          class="w-full p-3 rounded-lg text-black bg-gray-100" />
+      </div>
+    </div>
+  </section>
+
+  <section class="p-4 mx-4 mt-6">
+    <button onclick="kirimPesanan()" class="w-full bg-blue-600 py-3 rounded-lg hover:bg-blue-700">Bayar
+      Sekarang</button>
+  </section>
+
+  <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-white text-black rounded-lg w-96 p-6">
+      <h2 class="text-lg font-bold mb-4">Pembayaran via <span id="paymentTitle"></span></h2>
+
+      <div id="qrisDANA" class="hidden text-center mb-3">
+        <img src="QRIS.jpg" class="w-40 mx-auto mb-2 rounded border" />
+        <p>Scan QR DANA</p>
+      </div>
+      <div id="qrisOVO" class="hidden text-center mb-3">
+        <img src="OVO.jpg" class="w-40 mx-auto mb-2 rounded border" />
+        <p>Scan QR OVO</p>
+      </div>
+      <div id="qrisGOPAY" class="hidden text-center mb-3">
+        <img src="GOPAY.jpg" class="w-40 mx-auto mb-2 rounded border" />
+        <p>Scan QR GoPay</p>
+      </div>
+
+      <div class="text-sm mb-4">
+        <p><strong>User ID:</strong> <span id="strukUserID"></span></p>
+        <p><strong>Nominal:</strong> <span id="strukNominal"></span></p>
+        <p><strong>Metode:</strong> <span id="strukMetode"></span></p>
+        <p><strong>Email:</strong> <span id="strukEmail"></span></p>
+        <p><strong>WhatsApp:</strong> <span id="strukWA"></span></p>
+      </div>
+
+      <div class="border-t pt-4 mt-4">
+        <h3 class="text-sm font-semibold mb-2">Beri Rating</h3>
+        <div class="flex gap-1 text-yellow-400 text-xl mb-2" id="starRating">
+          <span onclick="setRating(1)">★</span>
+          <span onclick="setRating(2)">★</span>
+          <span onclick="setRating(3)">★</span>
+          <span onclick="setRating(4)">★</span>
+          <span onclick="setRating(5)">★</span>
+        </div>
+        <textarea id="ratingComment" rows="3" class="w-full p-2 border rounded text-black mb-2"
+          placeholder="Komentar..."></textarea>
+        <button onclick="submitRating()"
+          class="bg-yellow-500 text-black px-4 py-2 rounded hover:bg-yellow-600 w-full">Kirim Rating</button>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-4">
+        <button onclick="downloadStruk()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Download
+          Struk</button>
+        <button onclick="closeModal()" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedButton = null;
+    let userRating = 0;
+    let lastTransaksi = null;
+
+    function selectNominal(button) {
+      document.querySelectorAll('#nominalContainer button').forEach(btn => btn.classList.remove('selected'));
+      button.classList.add('selected');
+      selectedButton = button;
+    }
+
+    function kirimPesanan() {
+      const userID = document.getElementById('userID').value.trim();
+      const metode = document.getElementById('paymentMethod').value;
+      const email = document.getElementById('email').value.trim();
+      const wa = document.getElementById('whatsapp').value.trim();
+
+      if (!userID || !selectedButton || !metode || !email || !wa) {
+        alert("Silakan lengkapi semua data terlebih dahulu!");
+        return;
+      }
+
+      const nominal = selectedButton.querySelector('strong').innerText;
+      const produk = selectedButton.innerText.replace(nominal, '').trim();
+
+      const transaksi = {
+        userID, email, whatsapp: wa, metode, nominal, produk,
+        game: "Point Blank", waktu: new Date().toISOString()
+      };
+
+      const semuaTransaksi = JSON.parse(localStorage.getItem("topupTransactions") || "[]");
+      semuaTransaksi.push(transaksi);
+      localStorage.setItem("topupTransactions", JSON.stringify(semuaTransaksi));
+      lastTransaksi = transaksi;
+
+      document.getElementById("paymentTitle").innerText = metode;
+      document.getElementById("strukUserID").innerText = userID;
+      document.getElementById("strukNominal").innerText = produk + ' - ' + nominal;
+      document.getElementById("strukMetode").innerText = metode;
+      document.getElementById("strukEmail").innerText = email;
+      document.getElementById("strukWA").innerText = "+62" + wa;
+
+      ["qrisDANA", "qrisOVO", "qrisGOPAY"].forEach(id => document.getElementById(id).classList.add("hidden"));
+      if (metode === "DANA") document.getElementById("qrisDANA").classList.remove("hidden");
+      if (metode === "OVO") document.getElementById("qrisOVO").classList.remove("hidden");
+      if (metode === "GoPay") document.getElementById("qrisGOPAY").classList.remove("hidden");
+
+      document.getElementById("paymentModal").classList.remove("hidden");
+      document.getElementById("paymentModal").classList.add("flex");
+
+      const pesan = `*Pesanan Top-Up Point Blank*%0A%0A` +
+        `🆔 User ID: ${userID}%0A` +
+        `🎮 Produk: ${produk}%0A` +
+        `💰 Harga: ${nominal}%0A` +
+        `📧 Email: ${email}%0A` +
+        `📱 WhatsApp: +62${wa}`;
+
+      const waLink = `https://wa.me/62895603394304?text=${pesan}`;
+      setTimeout(() => window.open(waLink, '_blank'), 3000);
+    }
+
+    function setRating(star) {
+      userRating = star;
+      const stars = document.querySelectorAll("#starRating span");
+      stars.forEach((s, i) => s.style.color = i < star ? "#facc15" : "#d1d5db");
+    }
+
+    function submitRating() {
+      const komentar = document.getElementById("ratingComment").value.trim();
+      const waktu = new Date().toLocaleString("id-ID");
+
+      if (!lastTransaksi || userRating === 0) {
+        alert("Silakan top-up dan beri bintang dulu.");
+        return;
+      }
+
+      const ulasan = {
+        nama: lastTransaksi.email.split("@")[0],
+        email: lastTransaksi.email,
+        komentar,
+        rating: userRating,
+        waktu
+      };
+
+      const semuaUlasan = JSON.parse(localStorage.getItem("ulasanList") || "[]");
+      semuaUlasan.push(ulasan);
+      localStorage.setItem("ulasanList", JSON.stringify(semuaUlasan));
+
+      alert("Rating berhasil dikirim. Terima kasih!");
+      document.getElementById("ratingComment").value = '';
+      setRating(0);
+    }
+
+    function closeModal() {
+      document.getElementById("paymentModal").classList.add("hidden");
+      document.getElementById("paymentModal").classList.remove("flex");
+    }
+
+    function downloadStruk() {
+      const struk = `\nSTRUK PEMBAYARAN - SANZ STORE\n===============================\nGame       : Point Blank\nUser ID    : ${document.getElementById('strukUserID').innerText}\nNominal    : ${document.getElementById('strukNominal').innerText}\nMetode     : ${document.getElementById('strukMetode').innerText}\nEmail      : ${document.getElementById('strukEmail').innerText}\nWhatsApp   : ${document.getElementById('strukWA').innerText}\n===============================\nTerima kasih atas transaksi Anda.`;
+      const blob = new Blob([struk], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'Struk_PB_SANZ.txt';
+      a.click();
+    }
+  </script>
+
+</body>
+
+</html>
